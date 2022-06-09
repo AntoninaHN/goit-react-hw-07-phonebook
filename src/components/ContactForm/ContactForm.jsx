@@ -1,81 +1,84 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addContact } from "../../redux/contacts/operations";
-import styles from "./ContactForm.module.css";
+import { useState, useRef } from 'react';
+import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
 
-function ContactForm() {
-  const dispatch = useDispatch();
-  const contactSelector = useSelector((state) => state.contacts.items);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+import styles from './ContactForm.module.css';
 
-  const onAddContact = (e) => {
-    e.preventDefault();
-    const contact = { name, phone };
-    console.log(addContact(contact));
-    console.log(contactSelector);
-    const isNameContact = contactSelector.some(
-      (e) => e.name.toLowerCase() === name.toLowerCase()
-    );
-    if (isNameContact) {
-      return alert(`${name} is already in contacts.`);
-    }
-    dispatch(addContact(contact));
-    setName("");
-    setPhone("");
+const initialState = {
+  name: '',
+  number: '',
+};
+
+const ContactForm = ({ onChange }) => {
+  const [contact, setContact] = useState(initialState);
+  const nameInputId = useRef(nanoid());
+  const numberInputId = useRef(nanoid());
+  const handleChange = event => {
+    const { value, name } = event.target;
+    setContact({
+      ...contact,
+      [name]: value,
+    });
   };
 
-  const handleChange = ({ target }) => {
-    const { name, value } = target;
-    switch (name) {
-      case "name":
-        setName(value);
-        return;
-      case "phone":
-        setPhone(value);
-        return;
-      default:
-        return;
-    }
+  const handleSubmit = event => {
+    event.preventDefault();
+    onChange(contact);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setContact(initialState);
   };
 
   return (
-    <form onSubmit={onAddContact} className={styles.form}>
-      <label className={styles.label}>
-        <span className={styles.message}>Name</span>
-        <input
-          type="text"
-          name="name"
-          value={name}
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Username can only contain letters"
-          onChange={handleChange}
-          required
-          placeholder="add name..."
-          className={styles.input}
-        />
-      </label>
-      <label className={styles.label}>
-        <span className={styles.message}>Phone number</span>
-        <input
-          type="tel"
-          name="phone"
-          value={phone}
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-          title="
-only numbers and
-'+' symbol in the beginning are accepted"
-          onChange={handleChange}
-          required
-          placeholder="add number"
-          className={styles.input}
-        />
-      </label>
-      <button type="submit" className={styles.button} title="Add new contact">
-        Add contact
-      </button>
-    </form>
+    <>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <div className={styles.inputList}>
+          <label className={styles.label} htmlFor={nameInputId.current}>
+            Name
+          </label>
+          <input
+            className={styles.input}
+            type="text"
+            name="name"
+            value={contact.name}
+            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+            required
+            onChange={handleChange}
+            id={nameInputId.current}
+          />
+        </div>
+        <div className={styles.inputList}>
+          <label className={styles.label} htmlFor={numberInputId.current}>
+            Number
+          </label>
+          <input
+            className={styles.input}
+            type="tel"
+            name="number"
+            value={contact.number}
+            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+            onChange={handleChange}
+            required
+            id={numberInputId.current}
+          />
+        </div>
+        <button className={styles.button} type="submit">
+          Add contact
+        </button>
+      </form>
+    </>
   );
-}
+};
+
 
 export default ContactForm;
+
+ContactForm.propTypes = {
+  onChange: PropTypes.func.isRequired,
+};
+
+

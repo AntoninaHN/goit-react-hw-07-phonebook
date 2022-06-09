@@ -1,28 +1,25 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { changeFilter } from "../../redux/contacts/actions";
-import styles from "./Filter.module.css";
 
-const Filter = () => {
-  const dispatch = useDispatch();
-  const handleChange = (e) => dispatch(changeFilter(e.target.value));
-  const value = useSelector((state) => state.filter);
+import PropTypes from 'prop-types';
+ import { nanoid } from 'nanoid';
 
+import styles from './Filter.module.css'
+
+
+const Filter = ({ value, onChange }) => {
+    const filterInputId = nanoid()
   return (
-    <div className={styles.section}>
-      <label>
-        <h2 className={styles.title}>Find contact by name</h2>
-        <input
-          type="text"
-          name="filter"
-          value={value}
-          onChange={handleChange}
-          className={styles.input}
-          placeholder="find name"
-        />
-      </label>
-    </div>
+    <>
+       <label className={styles.label} htmlFor={filterInputId.current}> Find contacts by name</label>
+      <input className={styles.input} type="text" value={value} onChange={onChange}  /> 
+      
+    </>
   );
 };
 
 export default Filter;
+
+Filter.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
+

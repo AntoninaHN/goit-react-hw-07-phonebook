@@ -4,13 +4,19 @@
   border: 1px solid #ff69b4;
   color: #fff;
   border-radius: 3px;
+  margin-left: 20px;
+  max-height: 60px;
+  align-self:flex-end;
 }
 .button:hover {
   background-color: #b2497d;
   border: 1px solid #b2497d;
 }
 .label {
-  margin-right: 10px;
+  display: flex;
+  font-size: 20px;
+margin: 0 0 10px 0;
+
 }
 .input:not(:last-child) {
   margin-right: 15px;
